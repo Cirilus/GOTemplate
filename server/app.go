@@ -1,12 +1,15 @@
 package server
 
 import (
+	_ "ServerInit/docs"
 	"ServerInit/internal/config"
 	"ServerInit/pkg/health_check"
 	"context"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 	"net/http"
 	"os"
@@ -24,6 +27,12 @@ func NewApp(cfg *config.Config) *App {
 	}
 }
 
+// Run @title Golang Init
+// @version 1.0
+// @description This is init
+// @host localhost:8000
+// @BasePath /
+// @schemes http
 func (a *App) Run(port string) error {
 	router := gin.Default()
 	router.Use(
@@ -36,6 +45,8 @@ func (a *App) Run(port string) error {
 	router.Use(cors.New(corsConfig))
 
 	health_check.RegisterHTTPEEndpoints(router)
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	a.httpServer = &http.Server{
 		Addr:           ":" + port,
