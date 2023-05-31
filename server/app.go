@@ -4,6 +4,7 @@ import (
 	"ServerInit/internal/config"
 	"ServerInit/pkg/health_check"
 	"context"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"log"
@@ -29,6 +30,10 @@ func (a *App) Run(port string) error {
 		gin.Recovery(),
 		gin.Logger(),
 	)
+
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	router.Use(cors.New(corsConfig))
 
 	health_check.RegisterHTTPEEndpoints(router)
 
